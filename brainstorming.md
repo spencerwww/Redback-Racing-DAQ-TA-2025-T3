@@ -24,10 +24,12 @@ I then create a new VehicleData, assign the decoded temperature and timestamp to
 
 I then send this to the frontend, which should fix the issue.
 
-# After solving
+### After solving
 
 The client is correctly only outputting valid numbers now, some integers and some floats. I manually checked the values of the received temperatures and the decoded temperatures to ensure they were consistent. E.g. received temperature is "#\u0000\u0000\u0000" which corresponds to decimal value 35 so I ensure the decoded temperature is 35.
 
 The range and randomness of numbers outputted is very large (can sometimes jump from 20-80 to over 900), but that is outside the scope of this question and may need to be resolved later.
+
+2. A safe operating range for the battery temperature is 20-80 degrees. Add a feature to the backend `streaming-service` so that each time the received battery temperature exceeds this range more than 3 times in 5 seconds, the current timestamp and a simple error message is printed to console.
 
 ## Cloud
