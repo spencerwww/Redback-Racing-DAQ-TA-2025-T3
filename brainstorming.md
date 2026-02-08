@@ -16,9 +16,18 @@ This makes sense as the data is JSON sent over TCP, so it the data is being mist
 
 This is still usable data so I should keep it, but needs to be converted into a number format to be usable. I can do this by first making use of the currently unused VehicleData interface in server.ts to parse the data into the variables 'battery_temperature' and 'timestamp'.
 
-Then, I create a function to decode the battery_temperature value into a number type if the value is of string type, otherwise return if value is already a number.
+Then, I create a function to decode the battery_temperature value into a number type if the value is of string type, otherwise return if value is already a number. 
+
+The function creates a buffer to read the unicode, then interprets the buffer using readInt32LE() with an offset of zero to read the whole string and returns the output.
+
+I then create a new VehicleData, assign the decoded temperature and timestamp to it, then create a message using JSON.stringify()
 
 I then send this to the frontend, which should fix the issue.
 
+# After solving
+
+The client is correctly only outputting valid numbers now, some integers and some floats. I manually checked the values of the received temperatures and the decoded temperatures to ensure they were consistent. E.g. received temperature is "#\u0000\u0000\u0000" which corresponds to decimal value 35 so I ensure the decoded temperature is 35.
+
+The range and randomness of numbers outputted is very large (can sometimes jump from 20-80 to over 900), but that is outside the scope of this question and may need to be resolved later.
 
 ## Cloud
