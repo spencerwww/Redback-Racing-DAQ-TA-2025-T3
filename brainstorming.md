@@ -12,7 +12,7 @@ This file is used to document your thoughts, approaches and research conducted a
 
 When looking at the data received from the data emulator, there seems to be three main data types received: integer, float and this clearly invalid type in the form `#\u0000\u0000\u0000` or `\u0014\u0000\u0000\u0000`. These can either have an additional character in front of them, or just the \u.... text.
 
-A quick google search shows that these are escaped unicode strings. The character is supposed to represent an integer number, and the rest are null. This means that "#\u0000\u0000\u0000" is supposed to read 35 in decimal (u+0023 in hexidecimal).
+A quick google search shows that these are escaped unicode strings. The character is supposed to represent an integer number, and the rest are null. This means that `#\u0000\u0000\u0000` is supposed to read 35 in decimal (u+0023 in hexidecimal).
 
 This makes sense as the data is JSON sent over TCP, so it the data is being mistakenly read as a string rather than a number. 
 
@@ -36,6 +36,20 @@ The range and randomness of numbers outputted is very large (can sometimes jump 
 
 > A safe operating range for the battery temperature is 20-80 degrees. Add a feature to the backend `streaming-service` so that each time the received battery temperature exceeds this range more than 3 times in 5 seconds, the current timestamp and a simple error message is printed to console.
 
+The intuitive method is to store the last 5 seconds of data, and with each new data point remove the oldest one. If there are three or more data points lower than 20 or greater than 80, print an error message.
 
+Looking at `battery-emulator.ts`, I can see that it sends data every 500 milliseconds. One way to approach this would be to simply take the last 10 data points, but this assumes that the time intervals between data is *always* 500 milliseconds. 
+
+This is an incorrect assumption as there are delays and inconsistencies over the network, and even inconsistencies in the sensor itself in real life.
+
+A better approach is to use the time stamps in the messages themselves to calculate which data points to keep. Let me ask Claude if there is a more optimal approach.
+
+Claude responded that I should use a sliding window approach to count events where the temperatures are out of range. 
+
+This makes sense, as it uses much less memory - it only needs to store the out of range events rather than all data points in the last 5 seconds.
+
+Also, it prevents alert spam, as with my previous approach an error would be logged every time that there were more than 3 events in the last 5 seconds, which could easily lead to the console being spammed.
+
+I will implement this sliding window approach.
 
 ## Cloud
