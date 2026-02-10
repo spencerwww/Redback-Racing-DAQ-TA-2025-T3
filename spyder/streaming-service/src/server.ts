@@ -35,7 +35,7 @@ tcpServer.on("connection", (socket) => {
 
     const message: string = msg.toString();
 
-    // console.log(`Received: ${message}`);
+    console.log(`Received: ${message}`);
 
     const parsed: VehicleData = JSON.parse(message);
 
@@ -44,41 +44,44 @@ tcpServer.on("connection", (socket) => {
         outOfRange.splice(i, 1);
       } else {
         break;
-      }
-    }
+      };
+    };
 
     const decodedTemp: number = decodeBatteryTemperature(parsed.battery_temperature);
 
     const decodedMsg: VehicleData = {
       battery_temperature: decodedTemp,
       timestamp: parsed.timestamp
-    }
+    };
 
-    const decodedMessage: string = JSON.stringify(decodedMsg)
-    console.log(`Decoded: ${decodedMessage}`);
+    const decodedMessage: string = JSON.stringify(decodedMsg);
+    // console.log(`Decoded: ${decodedMessage}`);
 
     if (decodedTemp < MIN_TEMP || decodedTemp > MAX_TEMP) {
       // console.log(`Temperature out of range!`);
       outOfRange.push(decodedMsg);
       // console.log(outOfRange);
       // console.log(`Number of out of range events: ${outOfRange.length}`);
-    }
+    };
+    // console.log(outOfRange);
+
+    const now = Date.now();
 
     if (
       outOfRange.length > MAX_OUT_OF_RANGE_EVENTS
-      && lastAlertTime < parsed.timestamp - ALERT_COOLDOWN
+      && now - lastAlertTime > ALERT_COOLDOWN
     ) {
       // const warning = `Temperature exceeded safe operating range more than 
       //                 ${MAX_OUT_OF_RANGE_EVENTS} times in ${Number(EVENT_WINDOW / 1000)}
       //                 at timetamp ${decodedMsg.timestamp}!`;
       // console.error(warning);
-      console.error(
-        `Temperature exceeded safe operating range more than ` +
-        `${MAX_OUT_OF_RANGE_EVENTS} times in ${Number(EVENT_WINDOW / 1000)} seconds!\n`,
-        `Time: ${new Date().toISOString()} (Timestamp: ${decodedMsg.timestamp})`
-      );
-      lastAlertTime = Date.now()
-    }
+      console.error(`
+        Temperature exceeded safe operating range 
+        more than ${MAX_OUT_OF_RANGE_EVENTS} times within ${Number(EVENT_WINDOW / 1000)} seconds!
+        Time: ${new Date().toISOString()} (Timestamp: ${decodedMsg.timestamp})
+      `);
+      lastAlertTime = now;
+    };
     
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
