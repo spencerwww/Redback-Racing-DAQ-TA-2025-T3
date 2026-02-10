@@ -56,7 +56,9 @@ I will implement this sliding window approach.
 
 #### After solving
 
-Coding up the sliding window was not very complicated, and was very intuitive. I did have some trouble ensuring that the `outOfRange` array was updating and removing old elements correctly, and I did this by printing the contents of the array and checking that the element was removed from the array after 5 seconds.
+Coding up the sliding window was not very complicated, and was pretty intuitive. I did have some trouble ensuring that the `outOfRange` array was updating and removing old elements correctly, and I did this by printing the contents of the array and checking that the element was removed from the array after 5 seconds.
+
+I also had some debating in what format I should output the time, and I eventually decide to output using `.toISOString` for a universal time format, as well as the raw `timestamp` value.
 
 In hindsight, if this were a real project I would have to bring all the functionality into a separate class to not clog up the server file. As it is the final backend question, I will leave it for now but complete it later if I have time.
 
