@@ -23,12 +23,29 @@ const websocketServer = new WebSocketServer({ port: WS_PORT });
 tcpServer.on("connection", (socket) => {
   console.log("TCP client connected");
 
+  const MIN_TEMP = 20;
+  const MAX_TEMP = 80;
+  const MAX_OUT_OF_RANGE_EVENTS = 3;
+  const EVENT_WINDOW = 5000;
+  const ALERT_COOLDOWN = 5000;
+  var outOfRange: VehicleData[] = [];
+  var lastAlertTime = 0;
+
   socket.on("data", (msg) => {
+
     const message: string = msg.toString();
 
-    console.log(`Received: ${message}`);
+    // console.log(`Received: ${message}`);
 
     const parsed: VehicleData = JSON.parse(message);
+
+    for (let i = 0; i < outOfRange.length; i++) {
+      if (outOfRange[i].timestamp < parsed.timestamp - EVENT_WINDOW) {
+        outOfRange.splice(i, 1);
+      } else {
+        break;
+      }
+    }
 
     const decodedTemp: number = decodeBatteryTemperature(parsed.battery_temperature);
 
@@ -38,7 +55,30 @@ tcpServer.on("connection", (socket) => {
     }
 
     const decodedMessage: string = JSON.stringify(decodedMsg)
-    // console.log(`Decoded: ${decodedMessage}`);
+    console.log(`Decoded: ${decodedMessage}`);
+
+    if (decodedTemp < MIN_TEMP || decodedTemp > MAX_TEMP) {
+      // console.log(`Temperature out of range!`);
+      outOfRange.push(decodedMsg);
+      // console.log(outOfRange);
+      // console.log(`Number of out of range events: ${outOfRange.length}`);
+    }
+
+    if (
+      outOfRange.length > MAX_OUT_OF_RANGE_EVENTS
+      && lastAlertTime < parsed.timestamp - ALERT_COOLDOWN
+    ) {
+      // const warning = `Temperature exceeded safe operating range more than 
+      //                 ${MAX_OUT_OF_RANGE_EVENTS} times in ${Number(EVENT_WINDOW / 1000)}
+      //                 at timetamp ${decodedMsg.timestamp}!`;
+      // console.error(warning);
+      console.error(
+        `Temperature exceeded safe operating range more than ` +
+        `${MAX_OUT_OF_RANGE_EVENTS} times in ${Number(EVENT_WINDOW / 1000)} seconds!\n`,
+        `Time: ${new Date().toISOString()} (Timestamp: ${decodedMsg.timestamp})`
+      );
+      lastAlertTime = Date.now()
+    }
     
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {

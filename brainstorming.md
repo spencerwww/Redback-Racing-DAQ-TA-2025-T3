@@ -20,9 +20,9 @@ This is still usable data so I should keep it, but needs to be converted into a 
 
 Then, I create a function to decode the battery_temperature value into a number type if the value is of string type, otherwise return if value is already a number. 
 
-The function creates a buffer to read the unicode, then interprets the buffer using readInt32LE() with an offset of zero to read the whole string and returns the output.
+The function creates a buffer to read the unicode, then interprets the buffer into a number to output.
 
-I then create a new VehicleData, assign the decoded temperature and timestamp to it, then create a message using JSON.stringify()
+I then create a new VehicleData, assign the decoded temperature and timestamp to it, then create a message by converting it to a string.
 
 I then send this to the frontend, which should fix the issue.
 
@@ -45,6 +45,8 @@ This is an incorrect assumption as there are delays and inconsistencies over the
 A better approach is to use the time stamps in the messages themselves to calculate which data points to keep. Let me ask Claude if there is a more optimal approach.
 
 Claude responded that I should use a sliding window approach to count events where the temperatures are out of range. 
+
+This means that as each temperature reading is received, it checks if it is out of range, and if so it adds it to an out of range list. In that list, it will continuously check the timestamps to ensure it is less than 5 seconds. If an event is older than 5 seconds, it is removed from the list.
 
 This makes sense, as it uses much less memory - it only needs to store the out of range events rather than all data points in the last 5 seconds.
 
