@@ -54,4 +54,10 @@ Also, it prevents alert spam, as with my previous approach an error would be log
 
 I will implement this sliding window approach.
 
+#### After solving
+
+Coding up the sliding window was not very complicated, and was very intuitive. I did have some trouble ensuring that the `outOfRange` array was updating and removing old elements correctly, and I did this by printing the contents of the array and checking that the element was removed from the array after 5 seconds.
+
+In hindsight, if this were a real project I would have to bring all the functionality into a separate class to not clog up the server file. As it is the final backend question, I will leave it for now but complete it later if I have time.
+
 ## Cloud
