@@ -66,4 +66,8 @@ In hindsight, if this were a real project I would have to bring all the function
 
 Pretty simple, looking at the effect hook to handle WebSocket connection state changes, there are no dependencies. This means it only activates once on startup, and doesn't change when `readyState` changes. I just need to add `readyState` to the dependencies array.
 
+#### After solving
+
+Working as intended, checked by running `docker compose down` and `docker compose up` to disconnect and reconnect the streaming service, and watching the badge change according to the connection status.
+
 ## Cloud
