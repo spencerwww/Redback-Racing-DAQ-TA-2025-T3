@@ -62,4 +62,8 @@ I also had some debating in what format I should output the time, and I eventual
 
 In hindsight, if this were a real project I would have to bring all the functionality into a separate class to not clog up the server file. As it is the final backend question, I will leave it for now but complete it later if I have time.
 
+### Question 3
+
+Pretty simple, looking at the effect hook to handle WebSocket connection state changes, there are no dependencies. This means it only activates once on startup, and doesn't change when `readyState` changes. I just need to add `readyState` to the dependencies array.
+
 ## Cloud
