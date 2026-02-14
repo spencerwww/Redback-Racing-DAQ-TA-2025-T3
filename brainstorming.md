@@ -64,10 +64,42 @@ In hindsight, if this were a real project I would have to bring all the function
 
 ### Question 3
 
+> Currently the connect/disconnect button in the top right corner of the ui (frontend) does not update when data is streamed in via streaming service. Why is this occurring and what can be done to rectify this?
+
 Pretty simple, looking at the effect hook to handle WebSocket connection state changes, there are no dependencies. This means it only activates once on startup, and doesn't change when `readyState` changes. I just need to add `readyState` to the dependencies array.
 
 #### After solving
 
 Working as intended, checked by running `docker compose down` and `docker compose up` to disconnect and reconnect the streaming service, and watching the badge change according to the connection status.
+
+### Question 4
+
+
+> The NextJS frontend is currently very basic. **Using primarily tailwindCSS and Shadcn/ui components**, extend the frontend by completing the following:
+>
+> - Ensure the data displayed from `streaming-service` is correct to **3 decimal places** instead of being unbounded as it is currently.
+> - Ensure the battery temperature value changes colours based on the current temperature (E.g. changing to red when the safe temperature range is exceeded).
+> - Safe operating ranges are defined below
+>     | Range | Colour |
+>     |---------------------------------|--------|
+>     | Safe (20-80) | Green |
+>     | Nearing unsafe (20-25 or 75-80) | Yellow |
+>     | Unsafe (<20 or >80) | Red |
+>   - You may extend `globals.css` and `tailwind.config.js` where you see fit to implement these colours, or can elect to use another method (although the former is preferred).
+> - Create three additional features in the provided system. **These should involve visible changes in the `ui` but do not have to exclusively involve the ui** (E.g. error messages interface, light-mode toggle, graphing data).
+>   - To implement these, you may alter the streaming service payload if necessary.
+>   - You may use components other than those mentioned above if they can be justified in your `brainstorming.md` file (E.g. additional charting libraries, notifications (toast) libraries etc).
+>   - You are free to make more than three additional features if you're feeling creative!
+
+I will split this question in to two main parts: the battery temperature display and the additional features.
+
+The main part that needs to be changed for the first part is the `Numeric` function in `numeric.tsx`. The decimal place is easy, I can use JavaScript's built in `toFixed()` method to round to 3 dp.
+
+For the colour, I will use the given `cn()` function. This allows me to apply styles conditionally (in this case, depending on what range the value is in) and utilises twMerge to resolve Tailwind conflicts.
+
+I can utilise `--success` and `--destrutive` for green and red respectively, but will need to add a class for warning.
+
+
+
 
 ## Cloud
