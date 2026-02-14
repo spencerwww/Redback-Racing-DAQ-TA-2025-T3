@@ -97,9 +97,13 @@ The main part that needs to be changed for the first part is the `Numeric` funct
 
 For the colour, I will use the given `cn()` function. This allows me to apply styles conditionally (in this case, depending on what range the value is in) and utilises twMerge to resolve Tailwind conflicts.
 
-I can utilise `--success` and `--destrutive` for green and red respectively, but will need to add a class for warning.
+I can utilise `--success` and `--destructive` for green and red respectively, but will need to add a class for warning.
 
+#### After solving
 
+More or less went how I expected. I added an arrow function to be more explicit as to what type is added, so that the `cn()` function was not merging unnecessarily.
+
+Had an issue where my new colour class, `--warning` and `--warning-foreground` were not showing up, but that was due to docker. I rebuilt using `docker compose up --build` and the classes loaded properly. I ensured that the values were at the correct colour at the right range visually.
 
 
 ## Cloud
