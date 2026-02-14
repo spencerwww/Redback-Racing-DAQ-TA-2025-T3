@@ -38,6 +38,8 @@ code {
     --destructive-foreground: 0 0% 98%;
     --success: 100 70% 40%;
     --success-foreground: 100 70% 90%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 48 96% 89%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 72.2% 50.6%;
@@ -68,6 +70,8 @@ code {
     --destructive-foreground: 0 0% 98%;
     --success: 100 70% 40%;
     --success-foreground: 100 70% 90%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 48 96% 89%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 72.2% 50.6%;
