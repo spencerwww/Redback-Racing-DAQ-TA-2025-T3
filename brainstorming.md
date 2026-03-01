@@ -105,5 +105,9 @@ More or less went how I expected. I added an arrow function to be more explicit 
 
 Had an issue where my new colour class, `--warning` and `--warning-foreground` were not showing up, but that was due to docker. I rebuilt using `docker compose up --build` and the classes loaded properly. I ensured that the values were at the correct colour at the right range visually.
 
+#### Additional Feature 1: Theme setter
+
+Should be the easiest. Utilise button component from shadcn/ui and add to the header to switch states.
+
 
 ## Cloud

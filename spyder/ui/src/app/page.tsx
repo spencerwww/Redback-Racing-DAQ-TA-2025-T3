@@ -6,7 +6,8 @@ import { useTheme } from "next-themes"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Thermometer } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Thermometer, Moon, Sun } from "lucide-react"
 import Numeric from "../components/custom/numeric"
 import RedbackLogoDarkMode from "../../public/logo-darkmode.svg"
 import RedbackLogoLightMode from "../../public/logo-lightmode.svg"
@@ -25,7 +26,9 @@ interface VehicleData {
  * @returns {JSX.Element} The rendered page component.
  */
 export default function Page(): JSX.Element {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const isDarkMode = mounted && theme === "dark"
   const [temperature, setTemperature] = useState<any>(0)
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
   const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
@@ -35,6 +38,10 @@ export default function Page(): JSX.Element {
       shouldReconnect: () => true,
     },
   )
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   /**
    * Effect hook to handle WebSocket connection state changes.
@@ -72,19 +79,26 @@ export default function Page(): JSX.Element {
   /**
    * Effect hook to set the theme to dark mode.
    */
-  useEffect(() => {
-    setTheme("dark")
-  }, [setTheme])
+  // useEffect(() => {
+  //   setTheme("dark")
+  // }, [setTheme])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="px-5 h-20 flex items-center gap-5 border-b">
         <Image
-          src={RedbackLogoDarkMode}
-          className="h-12 w-auto"
+          src={isDarkMode ? RedbackLogoDarkMode : RedbackLogoLightMode}
+          className="h-12 w-10"
           alt="Redback Racing Logo"
         />
         <h1 className="text-foreground text-xl font-semibold">DAQ Technical Assessment</h1>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setTheme(isDarkMode ? "light" : "dark")}
+        >
+          {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+        </Button>
         <Badge variant={connectionStatus === "Connected" ? "success" : "destructive"} className="ml-auto">
           {connectionStatus}
         </Badge>
